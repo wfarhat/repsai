@@ -11,7 +11,7 @@ interface CalendarWithProgressProps {
 const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workoutDays, setWorkoutDays] = useState<number[]>([]);
-  const [yearlyWorkoutDays, setYearlyWorkoutDays] = useState<number>(0);
+  const [monthlyWorkoutDays, setYearlyWorkoutDays] = useState<number>(0);
   const [needsSaving, setNeedsSaving] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -110,7 +110,7 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
         Total Workout Days This Month: <span className="text-heading1-bold">{workoutDays.length}</span>
       </p>
       <p className="mt-2 text-center font-semibold">
-        Total Workout Days This Year: <span className="text-heading1-bold">{yearlyWorkoutDays}</span>
+        Total Workout Days This Year: <span className="text-heading1-bold">{monthlyWorkoutDays}</span>
       </p>
     </div>
   );

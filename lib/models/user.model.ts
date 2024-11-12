@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    id: { type: String, unique: true }, 
+    id: { type: String, unique: true },
     username: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     image: { type: String },
@@ -14,10 +14,6 @@ const userSchema = new mongoose.Schema(
       },
     ],
     onboarded: { type: Boolean, default: false },
-    workoutDays: {
-      type: [Date], 
-      default: [],
-    },
   },
   {
     timestamps: true,

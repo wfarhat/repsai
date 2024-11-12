@@ -6,7 +6,7 @@ const progressSchema = new mongoose.Schema(
     year: { type: Number, required: true },
     month: { type: Number, required: true },
     days: { type: [Number], default: [] },
-    yearlyWorkoutDays: { type: Number, default: 0 }, 
+    monthlyWorkoutDays: { type: Number, default: 0 }, 
   },
   {
     timestamps: true,

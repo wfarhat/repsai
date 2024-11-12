@@ -55,7 +55,7 @@ export async function saveWorkoutDays({ userId, year, month, days }: SaveWorkout
 
     await Progress.findOneAndUpdate(
       { user: userObjectId, year, month },
-      { $set: { days }, $inc: { yearlyWorkoutDays: daysDifference } },
+      { $set: { days }, $inc: { monthlyWorkoutDays: daysDifference } },
       { upsert: true }
     );
   } catch (error: any) {
