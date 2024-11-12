@@ -3,6 +3,7 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { fetchWorkouts } from "@/lib/actions/workout.actions";
 import WorkoutHeader from "@/components/shared/WorkoutHeader";
 import WorkoutCard from "@/components/shared/WorkoutCard";
+import WorkoutProfile from "@/components/forms/WorkoutProfileDelete";
 
 async function SavedWorkoutPage() {
   const user = await currentUser();
@@ -15,7 +16,6 @@ async function SavedWorkoutPage() {
 
   return (
     <div className="main-container p-6">
-      
       <WorkoutHeader
         accountId={userInfo.id}
         authUserId={user.id}
@@ -39,6 +39,15 @@ async function SavedWorkoutPage() {
         ) : (
           <p className="text-gray-400 mt-4">No saved workouts found.</p>
         )}
+      </div>
+
+      <div className="mt-6 block xl:hidden">
+        <h3 className="text-center text-heading4-medium text-primary-500">
+          Manage Workouts:
+        </h3>
+        <div className="text-center text-heading4-medium text-light-3">
+          <WorkoutProfile />
+        </div>
       </div>
     </div>
   );
