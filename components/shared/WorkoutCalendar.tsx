@@ -13,18 +13,18 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
   const [workoutDays, setWorkoutDays] = useState<number[]>([]);
   const [yearlyWorkoutDays, setYearlyWorkoutDays] = useState<number>(0);
   const [needsSaving, setNeedsSaving] = useState(false);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadWorkoutDays = async () => {
-      setLoading(true); 
+      setLoading(true);
       setWorkoutDays([]);
 
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
       const savedDays = await getWorkoutDays(userId, year, month);
       setWorkoutDays(savedDays);
-      setLoading(false); 
+      setLoading(false);
     };
     loadWorkoutDays();
   }, [userId, currentDate]);
@@ -45,7 +45,7 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
       const month = currentDate.getMonth() + 1;
       saveWorkoutDays({ userId, year, month, days: workoutDays });
       setNeedsSaving(false);
-      fetchYearlyWorkoutDays(); 
+      fetchYearlyWorkoutDays();
     }
   }, [workoutDays, currentDate, userId, needsSaving, fetchYearlyWorkoutDays]);
 
@@ -89,22 +89,23 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
         {daysInMonth.map((day) => {
           const dayNumber = parseInt(format(day, "d"));
           const isWorkoutDay = workoutDays.includes(dayNumber);
+          const isFutureDate = day > new Date();
 
           return (
             <button
               key={dayNumber}
               onClick={() => handleDayClick(dayNumber)}
-              className={`p-2 rounded w-25 h-8 ${
-                isWorkoutDay ? "bg-green-500 text-white" : "bg-gray-200"
-              } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-              disabled={loading} 
+              className={`p-2 rounded w-25 h-8 ${isWorkoutDay ? "bg-green-500 text-white" : "bg-gray-200"
+                } ${loading || isFutureDate ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={loading || isFutureDate}
             >
               {dayNumber}
             </button>
           );
         })}
+
       </div>
-      
+
       <p className="mt-4 text-center font-semibold">
         Total Workout Days This Month: <span className="text-heading1-bold">{workoutDays.length}</span>
       </p>
