@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { startOfMonth, endOfMonth, eachDayOfInterval, format, addMonths, subMonths } from "date-fns";
-import { saveWorkoutDays, getWorkoutDays } from "@/lib/actions/progress.actions";
+import { saveWorkoutDays, getWorkoutDays, getTotalWorkoutDaysForYear } from "@/lib/actions/progress.actions";
 
 interface CalendarWithProgressProps {
   userId: string;
@@ -13,30 +13,31 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
   const [workoutDays, setWorkoutDays] = useState<number[]>([]);
   const [yearlyWorkoutDays, setYearlyWorkoutDays] = useState<number>(0);
   const [needsSaving, setNeedsSaving] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     const loadWorkoutDays = async () => {
+      setLoading(true); 
+      setWorkoutDays([]);
+
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
       const savedDays = await getWorkoutDays(userId, year, month);
       setWorkoutDays(savedDays);
+      setLoading(false); 
     };
     loadWorkoutDays();
   }, [userId, currentDate]);
 
-  const calculateYearlyWorkoutDays = useCallback(async () => {
+  const fetchYearlyWorkoutDays = useCallback(async () => {
     const year = currentDate.getFullYear();
-    let totalDays = 0;
-    for (let month = 1; month <= 12; month++) {
-      const monthDays = await getWorkoutDays(userId, year, month);
-      totalDays += monthDays.length;
-    }
-    setYearlyWorkoutDays(totalDays);
+    const yearlyTotal = await getTotalWorkoutDaysForYear(userId, year);
+    setYearlyWorkoutDays(yearlyTotal);
   }, [currentDate, userId]);
 
   useEffect(() => {
-    calculateYearlyWorkoutDays();
-  }, [calculateYearlyWorkoutDays]);
+    fetchYearlyWorkoutDays();
+  }, [fetchYearlyWorkoutDays]);
 
   useEffect(() => {
     if (needsSaving) {
@@ -44,9 +45,9 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
       const month = currentDate.getMonth() + 1;
       saveWorkoutDays({ userId, year, month, days: workoutDays });
       setNeedsSaving(false);
-      calculateYearlyWorkoutDays();
+      fetchYearlyWorkoutDays(); 
     }
-  }, [workoutDays, currentDate, userId, needsSaving, calculateYearlyWorkoutDays]);
+  }, [workoutDays, currentDate, userId, needsSaving, fetchYearlyWorkoutDays]);
 
   const handleDayClick = (day: number) => {
     setWorkoutDays((prev) => {
@@ -93,9 +94,10 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
             <button
               key={dayNumber}
               onClick={() => handleDayClick(dayNumber)}
-              className={`p-2 rounded w-35 ${
+              className={`p-2 rounded w-25 h-8 ${
                 isWorkoutDay ? "bg-green-500 text-white" : "bg-gray-200"
-              }`}
+              } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={loading} 
             >
               {dayNumber}
             </button>
@@ -104,10 +106,10 @@ const CalendarWithProgress: React.FC<CalendarWithProgressProps> = ({ userId }) =
       </div>
       
       <p className="mt-4 text-center font-semibold">
-        Total Workout Days This Month: <span className="text-heading1-bold"> {workoutDays.length}</span>
+        Total Workout Days This Month: <span className="text-heading1-bold">{workoutDays.length}</span>
       </p>
       <p className="mt-2 text-center font-semibold">
-        Total Workout Days This Year: <span className="text-heading1-bold"> {yearlyWorkoutDays}</span>
+        Total Workout Days This Year: <span className="text-heading1-bold">{yearlyWorkoutDays}</span>
       </p>
     </div>
   );

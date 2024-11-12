@@ -47,12 +47,36 @@ export async function saveWorkoutDays({ userId, year, month, days }: SaveWorkout
       throw new Error("User not found in the database");
     }
 
+    const existingProgress = await Progress.findOne({ user: userObjectId, year, month });
+
+    const previousDaysCount = existingProgress ? existingProgress.days.length : 0;
+    const newDaysCount = days.length;
+    const daysDifference = newDaysCount - previousDaysCount;
+
     await Progress.findOneAndUpdate(
       { user: userObjectId, year, month },
-      { $set: { days } },
+      { $set: { days }, $inc: { yearlyWorkoutDays: daysDifference } },
       { upsert: true }
     );
   } catch (error: any) {
     throw new Error(`Failed to save workout days: ${error.message}`);
+  }
+}
+
+export async function getTotalWorkoutDaysForYear(userId: string, year: number): Promise<number> {
+  try {
+    await connectToDB();
+
+    const userObjectId = await getUserObjectId(userId);
+    if (!userObjectId) {
+      throw new Error("User not found in the database");
+    }
+
+    const progressEntries = await Progress.find({ user: userObjectId, year });
+
+    const totalWorkoutDays = progressEntries.reduce((total, entry) => total + entry.days.length, 0);
+    return totalWorkoutDays;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch yearly workout days: ${error.message}`);
   }
 }
