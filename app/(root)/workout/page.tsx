@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { fetchLatestWorkout } from "@/lib/actions/workout.actions"; 
 import NewWorkoutProfile from "@/components/shared/NewWorkoutProfile";
-import WorkoutCard from "@/components/shared/WorkoutCard";
+import WorkoutCardNew from "@/components/shared/WorkoutCardNew";
 
 async function ViewWorkoutPage() {
   const user = await currentUser();
@@ -19,7 +19,7 @@ async function ViewWorkoutPage() {
 
       <div className="workout-display mt-6">
         {latestWorkout ? (
-          <WorkoutCard
+          <WorkoutCardNew
             key={latestWorkout._id}
             index={0}
             title={latestWorkout.title}

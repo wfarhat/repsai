@@ -6,7 +6,8 @@ export async function POST(req: NextRequest) {
         const { age, weight, height, gender, goal, title, description, exerciseTarget } = await req.json();
 
         const prompt = `Create a detailed workout plan for a ${age}-year-old ${gender} weighing ${weight} kg and ${height} cm tall, with the goal of ${goal}. 
-        Focus on targeting the following muscle group(s) or exercises: ${exerciseTarget}. Please pay special attention to ${description}
+        Focus on targeting the following muscle group(s) or exercises: ${exerciseTarget}. Please pay special attention to ${description}. If ${exerciseTarget} or ${description}
+        don't make sense, please generate a general focused workout.
 
         The workout should be formatted as an array of exercises, with each exercise containing:
         - Exercise name
@@ -17,7 +18,10 @@ export async function POST(req: NextRequest) {
             { "name": "Exercise 1", "sets": 3, "reps": 10},
             { "name": "Exercise 2", "sets": 4, "reps": 12}
         ]
-        Don't add any messages or Important or anything at the end. I simply want my array of exercises.
+            If you have any exercises that are measured in seconds or minutes, please include that only in the title of the exercise, so Cardio (minutes). 
+            Do not include that next to reps, as that should be a number only.
+        Generate a workout plan as a JSON array with only the exercises, sets, and reps. Do not include any additional text, 
+        disclaimers, or explanations outside the JSON structure."
         `;
 
         const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
@@ -49,6 +53,7 @@ export async function POST(req: NextRequest) {
 }
 
 function cleanGeneratedText(text: string): string {
-    text = text.replace(/per leg/g, "").replace(/seconds/g, "");
+    text = text.replace(/per leg/g, "");
+    // .replace(/seconds/g, "").replace(/minutes/g, "");
     return text;
 }
