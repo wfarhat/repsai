@@ -7,7 +7,7 @@ import { useAuth } from "@clerk/nextjs";
 
 export default function HomePage() {
   const { isSignedIn } = useAuth();
-
+  
   return (
     <main className="main-container text-light-1">
       <section className="w-full max-w-4xl mx-auto text-center py-20 relative">
