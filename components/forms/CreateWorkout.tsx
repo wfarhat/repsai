@@ -20,20 +20,13 @@ interface Props {
 }
 
 async function handleCreateWorkout(values: WorkoutFormValues, userId: string) {
-    const numericValues = {
-        ...values,
-        age: parseInt(values.age, 10),
-        weight: parseFloat(values.weight),
-        height: parseFloat(values.height),
-    };
-
     try {
         const response = await fetch("/api/generateWorkout", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(numericValues),
+            body: JSON.stringify(values), // Directly use values as it's already the right format
         });
 
         if (!response.ok) throw new Error("Failed to generate workout");
@@ -55,6 +48,7 @@ async function handleCreateWorkout(values: WorkoutFormValues, userId: string) {
     }
 }
 
+
 function CreateWorkout({ userId }: Props) {
     const router = useRouter();
 
@@ -63,9 +57,6 @@ function CreateWorkout({ userId }: Props) {
         defaultValues: {
             title: "",
             description: "",
-            age: "",
-            weight: "",
-            height: "",
             gender: undefined,
             goal: undefined,
             exerciseTarget: "",
@@ -75,7 +66,7 @@ function CreateWorkout({ userId }: Props) {
     const onSubmit = async (values: WorkoutFormValues) => {
         const success = await handleCreateWorkout(values, userId);
         form.reset();
-        router.push(`/workout`); 
+        router.push(`/workout`);
 
     };
 
