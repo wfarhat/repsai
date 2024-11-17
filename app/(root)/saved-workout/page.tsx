@@ -1,9 +1,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { fetchWorkouts } from "@/lib/actions/workout.actions";
-import WorkoutHeader from "@/components/shared/WorkoutHeader";
-import WorkoutCard from "@/components/shared/WorkoutCard";
-import WorkoutProfile from "@/components/forms/WorkoutProfileDelete";
+import WorkoutHeader from "@/components/workouts/WorkoutHeader";
+import WorkoutCard from "@/components/workouts/WorkoutCard";
+import WorkoutProfile from "@/components/workouts/WorkoutProfileDelete";
 
 async function SavedWorkoutPage() {
   const user = await currentUser();

@@ -1,8 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { fetchLatestWorkout } from "@/lib/actions/workout.actions"; 
-import NewWorkoutProfile from "@/components/shared/NewWorkoutProfile";
-import WorkoutCardNew from "@/components/shared/WorkoutCardNew";
+import NewWorkoutProfile from "@/components/workouts/NewWorkoutProfile";
+import WorkoutCardNew from "@/components/workouts/WorkoutCardNew";
 
 async function ViewWorkoutPage() {
   const user = await currentUser();

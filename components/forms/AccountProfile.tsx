@@ -25,16 +25,17 @@ import { isBase64Image } from "@/lib/utils";
 import { UserValidation } from "@/lib/validations/user";
 import { updateUser } from "@/lib/actions/user.actions";
 
+// Props interface for user profile and form controls
 interface Props {
     user: {
         id: string;
-        objectId: string;
+        objectId: string; 
         username: string;
         name: string;
         bio: string;
         image: string;
     };
-    onboarded: boolean; 
+    onboarded: boolean;
     btnTitle: string;
 }
 
@@ -43,10 +44,11 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
     const pathname = usePathname();
     const { startUpload } = useUploadThing("media");
     const { user: clerkUser } = useUser();
-    const { signOut } = useClerk(); 
+    const { signOut } = useClerk();
 
     const [files, setFiles] = useState<File[]>([]);
 
+    // Initialize form with validation schema and default values
     const form = useForm({
         resolver: zodResolver(UserValidation),
         defaultValues: {
@@ -57,18 +59,22 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
         },
     });
 
+    // Form submission logic
     const onSubmit = async (values: z.infer<typeof UserValidation>) => {
         const blob = values.profile_photo;
 
+        // Check if profile photo has been changed
         const hasImageChanged = isBase64Image(blob);
         if (hasImageChanged) {
             const imgRes = await startUpload(files);
 
+            // If image upload is successful, update profile photo URL
             if (imgRes && imgRes[0].url) {
                 values.profile_photo = imgRes[0].url;
             }
         }
 
+        // Update user information in the database
         await updateUser({
             name: values.name,
             path: pathname,
@@ -78,6 +84,7 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
             image: values.profile_photo,
         });
 
+        // Redirect based on the current path
         if (pathname === "/profile/edit") {
             router.back();
         } else {
@@ -85,6 +92,7 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
         }
     };
 
+    // Handle image upload and preview
     const handleImage = (
         e: ChangeEvent<HTMLInputElement>,
         fieldChange: (value: string) => void
@@ -97,8 +105,10 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
             const file = e.target.files[0];
             setFiles(Array.from(e.target.files));
 
+            // Validate file type
             if (!file.type.includes("image")) return;
 
+            // Convert file to base64 string for preview
             fileReader.onload = async (event) => {
                 const imageDataUrl = event.target?.result?.toString() || "";
                 fieldChange(imageDataUrl);
@@ -108,6 +118,7 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
         }
     };
 
+    // Handle user profile deletion
     const handleDeleteProfile = async () => {
         if (!clerkUser) {
             alert("User not found. Please log in and try again.");
@@ -115,11 +126,12 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
         }
 
         try {
+            // Confirm deletion with the user
             if (window.confirm("Are you sure you want to delete your profile? This action cannot be undone.")) {
-                await clerkUser.delete();
+                await clerkUser.delete(); 
                 alert("Your profile has been deleted successfully.");
                 await signOut(); 
-                router.push("/sign-in"); 
+                router.push("/sign-in");
             }
         } catch (error) {
             console.error("Error deleting profile:", error);
@@ -128,11 +140,13 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
     };
 
     return (
+        // Render the form component
         <Form {...form}>
             <form
                 className="flex flex-col justify-start gap-10"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
+                {/* Profile photo upload */}
                 <FormField
                     control={form.control}
                     name="profile_photo"
@@ -172,6 +186,7 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
                     )}
                 />
 
+                {/* Name input field */}
                 <FormField
                     control={form.control}
                     name="name"
@@ -192,6 +207,7 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
                     )}
                 />
 
+                {/* Username input field */}
                 <FormField
                     control={form.control}
                     name="username"
@@ -212,6 +228,7 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
                     )}
                 />
 
+                {/* Bio input field */}
                 <FormField
                     control={form.control}
                     name="bio"
@@ -232,10 +249,12 @@ const AccountProfile = ({ user, onboarded, btnTitle }: Props) => {
                     )}
                 />
 
+                {/* Submit button */}
                 <Button type="submit" className="bg-primary-500">
                     {btnTitle}
                 </Button>
 
+                {/* Delete profile button */}
                 {onboarded && (
                     <Button
                         type="button"

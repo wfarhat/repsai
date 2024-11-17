@@ -16,10 +16,12 @@ interface WorkoutCardEditProps {
 const WorkoutCardEdit: React.FC<WorkoutCardEditProps> = ({ index, title, date, exercises }) => {
     return (
         <div className="workout-card p-6 text-white">
+            {/* Display the creation date of the workout */}
             <p className="text-gray-400 text-sm mb-4" style={{ opacity: 0.7, pointerEvents: 'none' }}>
                 Date Created: {new Date(date).toLocaleDateString()}
             </p>
 
+            {/* Input field for editing the workout title */}
             <div className="text-center mt-2">
                 <label className="block">Workout Title:</label>
                 <input
@@ -29,6 +31,7 @@ const WorkoutCardEdit: React.FC<WorkoutCardEditProps> = ({ index, title, date, e
                 />
             </div>
 
+            {/* List of exercises with editable fields for each exercise */}
             <h3 className="text-center mt-6 text-lg font-bold">Exercises:</h3>
             <ul>
                 {exercises.map((exercise, idx) => (
@@ -63,6 +66,7 @@ const WorkoutCardEdit: React.FC<WorkoutCardEditProps> = ({ index, title, date, e
                 ))}
             </ul>
 
+            {/* Save button (disabled by default) */}
             <button
                 disabled
                 className="mt-6 w-full p-2 bg-green-500 text-white rounded opacity-50 cursor-not-allowed"

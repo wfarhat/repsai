@@ -16,24 +16,28 @@ import { createWorkout } from "@/lib/actions/workout.actions";
 type WorkoutFormValues = z.infer<typeof WorkoutValidation>;
 
 interface Props {
-    userId: string;
+    userId: string; 
 }
 
+// Function to handle workout creation and API integration
 async function handleCreateWorkout(values: WorkoutFormValues, userId: string) {
     try {
+        // Call API to generate workout
         const response = await fetch("/api/generateWorkout", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(values), // Directly use values as it's already the right format
+            body: JSON.stringify(values),
         });
 
         if (!response.ok) throw new Error("Failed to generate workout");
 
+        // Parse response and extract generated exercises
         const data = await response.json();
         const exercises = data.exercises;
 
+        // Save the generated workout in the database
         await createWorkout({
             title: values.title,
             description: values.description,
@@ -44,14 +48,15 @@ async function handleCreateWorkout(values: WorkoutFormValues, userId: string) {
         return true;
     } catch (error) {
         console.error("Submission Error:", error);
-        return false;
+        return false; 
     }
 }
 
-
+// Component to render the Create Workout form
 function CreateWorkout({ userId }: Props) {
     const router = useRouter();
 
+    // Initialize form with validation and default values
     const form = useForm<WorkoutFormValues>({
         resolver: zodResolver(WorkoutValidation),
         defaultValues: {
@@ -63,16 +68,17 @@ function CreateWorkout({ userId }: Props) {
         },
     });
 
+    // Handle form submission
     const onSubmit = async (values: WorkoutFormValues) => {
         const success = await handleCreateWorkout(values, userId);
-        form.reset();
-        router.push(`/workout`);
-
+        form.reset(); 
+        router.push(`/workout`); 
     };
 
     return (
         <Form {...form}>
             <form className="mt-10 flex flex-col justify-start gap-10" onSubmit={form.handleSubmit(onSubmit)}>
+                {/* Input for Workout Title */}
                 <FormField
                     control={form.control}
                     name="title"
@@ -87,6 +93,7 @@ function CreateWorkout({ userId }: Props) {
                     )}
                 />
 
+                {/* Input for Exercise/Muscle Target */}
                 <FormField
                     control={form.control}
                     name="exerciseTarget"
@@ -102,6 +109,7 @@ function CreateWorkout({ userId }: Props) {
                 />
 
                 <div className="flex gap-6">
+                    {/* Input for Age */}
                     <FormField
                         control={form.control}
                         name="age"
@@ -116,6 +124,7 @@ function CreateWorkout({ userId }: Props) {
                         )}
                     />
 
+                    {/* Input for Weight */}
                     <FormField
                         control={form.control}
                         name="weight"
@@ -130,6 +139,7 @@ function CreateWorkout({ userId }: Props) {
                         )}
                     />
 
+                    {/* Input for Height */}
                     <FormField
                         control={form.control}
                         name="height"
@@ -144,7 +154,9 @@ function CreateWorkout({ userId }: Props) {
                         )}
                     />
                 </div>
+
                 <div className="flex gap-6">
+                    {/* Input for Gender */}
                     <FormField
                         control={form.control}
                         name="gender"
@@ -166,6 +178,7 @@ function CreateWorkout({ userId }: Props) {
                         )}
                     />
 
+                    {/* Input for Goal */}
                     <FormField
                         control={form.control}
                         name="goal"
@@ -187,6 +200,8 @@ function CreateWorkout({ userId }: Props) {
                         )}
                     />
                 </div>
+
+                {/* Input for Extra Details */}
                 <FormField
                     control={form.control}
                     name="description"
@@ -201,6 +216,7 @@ function CreateWorkout({ userId }: Props) {
                     )}
                 />
 
+                {/* Submit Button */}
                 <Button type="submit" className="bg-primary-500">
                     Generate Workout
                 </Button>
