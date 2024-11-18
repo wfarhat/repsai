@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
         const prompt = `Create a detailed workout plan for a ${age}-year-old ${gender} weighing ${weight} kg and ${height} cm tall, with the goal of ${goal}. 
         Focus on targeting the following muscle group(s) or exercises: ${exerciseTarget}. Please pay special attention to ${description}. If ${exerciseTarget} or ${description}
         don't make sense, please generate a general focused workout.
-
         The workout should be formatted as an array of exercises, with each exercise containing:
         - Exercise name
         - Number of sets
@@ -21,7 +20,7 @@ export async function POST(req: NextRequest) {
             { "name": "Exercise 2", "sets": 4, "reps": 12}
         ]
             If you have any exercises that are measured in seconds or minutes, please include that only in the title of the exercise, so Cardio (minutes). 
-            Do not include that next to reps, as that should be a number only.
+            If you have any exercises that require "as many as possible" amount of reps, then please set a limit, like 15. Do not include that next to reps, as that should be a number only.
         Generate a workout plan as a JSON array with only the exercises, sets, and reps. Do not include any additional text, 
         disclaimers, or explanations outside the JSON structure."
         `;
@@ -29,18 +28,16 @@ export async function POST(req: NextRequest) {
         // Validate and fetch the API key from environment variables
         const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
         if (!apiKey) {
-            throw new Error("API key is not defined. Please set GOOGLE_GEMINI_API_KEY in your .env.local file.");
+            throw new Error("API key is not defined.");
         }
 
         // Initialize Google Generative AI client
         const genAI = new GoogleGenerativeAI(apiKey);
-
         // Load the specific model to be used for content generation
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // Generate the workout content using the AI model and defined prompt
         const result = await model.generateContent(prompt);
-
         // Extract the generated text from the response
         let generatedText = result.response.text();
         console.log("Generated Workout:", generatedText);
@@ -68,5 +65,8 @@ export async function POST(req: NextRequest) {
 // Function to clean unwanted text patterns from AI's response
 function cleanGeneratedText(text: string): string {
     text = text.replace(/per leg/g, "");
+    text = text.replace(/```json[\r\n]*|```[\r\n]*$/g, "");
+
+    // .replace(/seconds/g, "").replace(/minutes/g, "");
     return text;
 }

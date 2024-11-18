@@ -44,7 +44,7 @@ const NewWorkoutProfile = () => {
         try {
             await deleteWorkout(clerkUser.id, workoutId); 
             setWorkoutId(null); 
-            window.location.reload(); 
+            router.push(`/saved-workout`); 
         } catch (error) {
             console.error("Failed to delete workout:", error);
             alert("Failed to delete workout.");
@@ -80,7 +80,7 @@ const NewWorkoutProfile = () => {
                     {/* Button for deleting the workout */}
                     <button
                         onClick={handleDeleteWorkout}
-                        className="px-3 py-2 bg-red-500 hover:bg-red-600 rounded flex items-center gap-2"
+                        className="px-3 py-2 bg-gray-400 hover:bg-red-600 rounded flex items-center gap-2"
                     >
                         <Image src="/assets/delete.svg" alt="Delete" width={24} height={24} />
                         <span>Delete Workout</span>
