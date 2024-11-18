@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { fetchUserWorkouts, deleteWorkout } from "@/lib/actions/workout.actions";
+import { fetchUserWorkouts } from "@/lib/actions/workout.actions";
 import Image from "next/image";
 
 const NewWorkoutProfile = () => {
@@ -24,38 +24,33 @@ const NewWorkoutProfile = () => {
             }
 
             try {
-                // Fetch user's workouts and set the first workout ID
+                // Fetch user's workouts and sort them by date (latest first)
                 const workouts = await fetchUserWorkouts(clerkUser.id);
-                setWorkoutId(workouts[0] || null);
+                const sortedWorkouts = workouts.sort(
+                    (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
+                );
+
+                setWorkoutId(sortedWorkouts[0] || null);
             } catch (error) {
                 console.error("Error fetching workouts:", error);
             } finally {
-                setLoading(false); 
+                setLoading(false);
             }
         };
 
         getWorkoutId();
     }, [clerkUser]);
 
-    // Handle deleting the current workout
-    const handleDeleteWorkout = async () => {
-        if (!clerkUser || !workoutId) return;
-
-        try {
-            await deleteWorkout(clerkUser.id, workoutId); 
-            setWorkoutId(null); 
-            router.push(`/saved-workout`); 
-        } catch (error) {
-            console.error("Failed to delete workout:", error);
-            alert("Failed to delete workout.");
-        }
-    };
-
     // Navigate to the workout edit page
     const handleEditWorkout = () => {
         if (workoutId) {
             router.push(`/workout/edit`);
         }
+    };
+
+    // Navigate to the saved workout page
+    const handleContinue = () => {
+        router.push(`/saved-workout`);
     };
 
     // Display loading state while data is being fetched
@@ -77,13 +72,13 @@ const NewWorkoutProfile = () => {
                         <span>Edit Workout</span>
                     </button>
 
-                    {/* Button for deleting the workout */}
+                    {/* Button for continuing to the saved workout */}
                     <button
-                        onClick={handleDeleteWorkout}
-                        className="px-3 py-2 bg-gray-400 hover:bg-red-600 rounded flex items-center gap-2"
+                        onClick={handleContinue}
+                        className="px-3 py-2 bg-green-500 hover:bg-green-600 rounded flex items-center gap-2"
                     >
-                        <Image src="/assets/delete.svg" alt="Delete" width={24} height={24} />
-                        <span>Delete Workout</span>
+                        <Image src="/assets/favorites.png" alt="Continue" width={24} height={24} />
+                        <span>Continue</span>
                     </button>
                 </div>
             ) : (
