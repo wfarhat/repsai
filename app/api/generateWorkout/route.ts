@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
             { "name": "Exercise 2", "sets": 4, "reps": 12}
         ]
             If you have any exercises that are measured in seconds or minutes, please include that only in the title of the exercise, so Cardio (minutes). 
-            If you have any exercises that require "as many as possible" amount of reps, then please set a limit, like 15. Do not include that next to reps, as that should be a number only.
+            If you have any exercises that require "as many as possible" amount of reps, in JSON structure only put 15. AGAIN, reps and sets ARE ONLY integers!
         Generate a workout plan as a JSON array with only the exercises, sets, and reps. Do not include any additional text, 
         disclaimers, or explanations outside the JSON structure."
         `;
