@@ -21,9 +21,11 @@ function ProfileHeader({
   joinDate,
 }: ProfileHeaderProps) {
   return (
+    // Show the edit button if the authenticated user is viewing their own profile
+    // Display the user profile image, name, username, bio, and join date
+
     <div className="user-card bg-dark-3 p-6 rounded-xl w-full max-w-2xl relative flex flex-col items-center">
 
-      // Show the edit button if the authenticated user is viewing their own profile
       {accountId === authUserId && (
         <Link href="/profile/edit">
           <div className="absolute top-4 right-4 flex cursor-pointer gap-3 items-center rounded-lg bg-light-3 px-5 py-3">
@@ -39,7 +41,6 @@ function ProfileHeader({
         </Link>
       )}
 
-      // Display the user profile image, name, username, bio, and join date
       <div className="flex flex-col items-center mt-4">
         <Image
           src={imgUrl || "/default-avatar.png"}

@@ -5,7 +5,9 @@ import Image from "next/image";
 import React from "react";
 import { useAuth } from "@clerk/nextjs";
 
+
 export default function HomePage() {
+  
   const { isSignedIn } = useAuth();
   
   return (

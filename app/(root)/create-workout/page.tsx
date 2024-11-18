@@ -11,22 +11,8 @@ async function Page() {
 
     const userInfo = await fetchUser(user.id);
     if (!userInfo?.onboarded) redirect("/onboarding");
-
-
-
-
-
     console.log("User:", user);
     console.log("User Info:", userInfo);
-
-
-
-
-
-
-
-
-
     return (
         <>
             <h1 className='head-text'>Generate Workout</h1>

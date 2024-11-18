@@ -1,14 +1,17 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { fetchUser } from "@/lib/actions/user.actions";
 import ProfileHeader from "@/components/shared/ProfileHeader";
+import { redirect } from "next/navigation";
 
 async function ProfilePage() {
   const user = await currentUser();
   if (!user) return <p>User not authenticated</p>;
 
   const userInfo = await fetchUser(user.id);
-  if (!userInfo) return <p>User not found in the database</p>;
+  if (!userInfo?.onboarded) redirect("/onboarding");
 
+
+  
   const joinDate = new Date(userInfo.createdAt).toLocaleDateString();
 
   return (

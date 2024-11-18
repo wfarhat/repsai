@@ -4,13 +4,16 @@ import { fetchWorkouts } from "@/lib/actions/workout.actions";
 import WorkoutHeader from "@/components/workouts/WorkoutHeader";
 import WorkoutCard from "@/components/workouts/WorkoutCard";
 import WorkoutProfile from "@/components/workouts/WorkoutProfileDelete";
+import { redirect } from "next/navigation";
 
 async function SavedWorkoutPage() {
   const user = await currentUser();
   if (!user) return <p>User not authenticated</p>;
 
   const userInfo = await fetchUser(user.id);
-  if (!userInfo) return <p>User not found in the database</p>;
+  if (!userInfo?.onboarded) redirect("/onboarding");
+
+
 
   const workouts = await fetchWorkouts(userInfo._id);
 

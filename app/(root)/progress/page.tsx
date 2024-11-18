@@ -1,15 +1,20 @@
 
 import CalendarWithProgress from "@/components/workouts/WorkoutCalendar";
+import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 export default async function ProgressPage() {
     const user = await currentUser();
-
     if (!user) {
         redirect("/sign-in");
         return null;
     }
+
+    const userInfo = await fetchUser(user.id);
+    if (!userInfo?.onboarded) redirect("/onboarding");
+
+    
 
     return (
         <main className="mx-auto max-w-5xl p-10">
